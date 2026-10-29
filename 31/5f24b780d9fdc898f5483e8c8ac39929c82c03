@@ -1,0 +1,19 @@
+"QR Code Collector/Assets.xcassets/AppIcon.appiconset/Contents.json"
+  s_b77d30bee5c2f2::t_fa9bb8d357f3d4 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "315f24b780d9fdc898f5483e8c8ac39929c82c03",
+  "prompts": {},
+  "sessions": {
+    "s_b77d30bee5c2f2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "84df4a7a-5839-4587-aafa-4e0e9fac858b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Nicholas Lim <nic.lim@foodpanda.com>"
+    }
+  }
+}
