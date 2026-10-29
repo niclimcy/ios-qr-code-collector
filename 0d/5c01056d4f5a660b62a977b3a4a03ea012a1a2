@@ -1,0 +1,26 @@
+"QR Code Collector/ViewController.swift"
+  s_98a4387e4cc36b::t_07dcd41618124c 219,227-229
+  s_98a4387e4cc36b::t_7ed86ce964e603 220-226
+"QR Code Collector/QRCodeFormViewController.swift"
+  s_98a4387e4cc36b::t_499ac3a974546c 152,158-159,162
+  s_98a4387e4cc36b::t_966b964c3f250f 153-154
+  s_98a4387e4cc36b::t_6cbf56570d3f4d 117-119,121-126,130,134,138-146,148,156-157,160-161,163-166
+  s_98a4387e4cc36b::t_b74e0210c13e99 127-129
+  s_98a4387e4cc36b::t_ae0787034c2c12 149,151,155
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0d5c01056d4f5a660b62a977b3a4a03ea012a1a2",
+  "prompts": {},
+  "sessions": {
+    "s_98a4387e4cc36b": {
+      "agent_id": {
+        "tool": "cline",
+        "id": "conv_1793258407962_yn2d5nn",
+        "model": "unknown"
+      },
+      "human_author": null
+    }
+  }
+}
