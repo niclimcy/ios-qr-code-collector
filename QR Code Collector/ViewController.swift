@@ -8,7 +8,16 @@ class ViewController: UIViewController {
     private var dataSource:
         UICollectionViewDiffableDataSource<Section, QRCodeItem>!
     private var style: Style = .grid
-    private var qrCodeItems: [QRCodeItem] = []
+    private let store: QRCodeStore
+
+    init(store: QRCodeStore) {
+        self.store = store
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
@@ -95,7 +104,7 @@ class ViewController: UIViewController {
         setupUI()
         setupLayout()
         configureDataSource()
-        loadSampleData()
+        applySnapshot(items: store.items, animatingDifferences: false)
     }
 
     private func setupUI() {
@@ -187,20 +196,6 @@ class ViewController: UIViewController {
 
         collectionView.setCollectionViewLayout(layout, animated: true)
     }
-
-    private func loadSampleData() {
-        let items = [
-            QRCodeItem(value: "https://www.apple.com", scannedAt: Date()),
-            QRCodeItem(
-                value: "WIFI:T:WPA;S:MyNetwork;P:password123;;",
-                scannedAt: Date()
-            ),
-            QRCodeItem(value: "mailto:hello@example.com", scannedAt: Date()),
-            QRCodeItem(value: "tel:+1234567890", scannedAt: Date()),
-        ]
-        qrCodeItems += items
-        applySnapshot(items: qrCodeItems, animatingDifferences: false)
-    }
 }
 
 // MARK: - UICollectionViewDelegate
@@ -236,11 +231,19 @@ extension ViewController: UICollectionViewDelegate {
 // MARK: - QRScannerViewControllerDelegate
 extension ViewController: QRScannerViewControllerDelegate {
     func didScanQRCode(_ value: String) {
-        qrCodeItems.append(QRCodeItem(value: value, scannedAt: Date.now))
-        applySnapshot(items: qrCodeItems, animatingDifferences: true)
+        store.add(QRCodeItem(value: value, scannedAt: Date.now))
+        applySnapshot(items: store.items, animatingDifferences: true)
     }
 }
 
 #Preview {
-    UINavigationController(rootViewController: ViewController())
+    UINavigationController(
+        rootViewController: ViewController(
+            store: QRCodeStore(
+                fileURL: URL.temporaryDirectory.appending(
+                    path: "preview-qrcodes.json"
+                )
+            )
+        )
+    )
 }
