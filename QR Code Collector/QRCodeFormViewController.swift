@@ -36,6 +36,20 @@ class QRCodeFormViewController: UIViewController {
         return label
     }()
 
+    let openButton: UIButton = {
+        let button = UIButton()
+        var configuration = UIButton.Configuration.prominentGlass()
+        configuration.title = "Open"
+        configuration.image = UIImage(systemName: "arrow.up.forward.app")
+        configuration.imagePadding = 8
+        configuration.cornerStyle = .capsule
+        button.configuration = configuration
+        button.accessibilityHint = "Opens the content of this QR code"
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        return button
+    }()
+
     let scanLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .headline)
@@ -81,8 +95,17 @@ class QRCodeFormViewController: UIViewController {
         view.addSubview(stackView)
         stackView.addArrangedSubview(qrImageView)
         stackView.addArrangedSubview(valueLabel)
+        stackView.addArrangedSubview(openButton)
         stackView.addArrangedSubview(scanLabel)
         stackView.addArrangedSubview(scannedAtLabel)
+
+        // Only offer "Open" when the QR code's value is something we can open.
+        openButton.isHidden = openableURL == nil
+        openButton.addTarget(
+            self,
+            action: #selector(openTapped),
+            for: .touchUpInside
+        )
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .cancel,
@@ -91,19 +114,50 @@ class QRCodeFormViewController: UIViewController {
         )
     }
 
+    /// Padding between the stack view and the edges of the safe area.
+    private let contentPadding: CGFloat = 24
+
     private func setupLayout() {
+        // The QR image is up to 200pt tall, but is the first thing to shrink
+        // (before any text) if the sheet is ever short on space.
+        qrImageView.setContentCompressionResistancePriority(
+            .defaultLow,
+            for: .vertical
+        )
+
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 24
+                constant: contentPadding
             ),
             stackView.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -24
+                constant: -contentPadding
             ),
-            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            qrImageView.heightAnchor.constraint(equalToConstant: 200),
+            stackView.topAnchor.constraint(
+                greaterThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: contentPadding
+            ),
+            stackView.bottomAnchor.constraint(
+                lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -contentPadding
+            ),
+            stackView.centerYAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.centerYAnchor
+            ),
+            qrImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 200),
         ])
+    }
+
+    /// Height of the content below the navigation bar at the given width.
+    func fittingHeight(forWidth width: CGFloat) -> CGFloat {
+        loadViewIfNeeded()
+        let size = stackView.systemLayoutSizeFitting(
+            CGSize(width: width - contentPadding * 2, height: 0),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+        return ceil(size.height) + contentPadding * 2
     }
 
     private func makeQRCode(from string: String, scale: CGFloat = 10)
@@ -120,6 +174,58 @@ class QRCodeFormViewController: UIViewController {
         else { return nil }
 
         return UIImage(cgImage: cgImage)
+    }
+
+    /// URL schemes the system can open without extra Info.plist configuration.
+    private static let supportedSchemes: Set<String> = [
+        "http", "https", "mailto", "tel", "sms", "facetime", "maps",
+    ]
+
+    /// The URL represented by the QR code's value, or `nil` if it can't be opened.
+    private var openableURL: URL? {
+        let value = qrCodeItem.value.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+
+        // Values that already have a supported scheme, e.g. "https://…" or "tel:…".
+        if let url = URL(string: value),
+            let scheme = url.scheme?.lowercased(),
+            Self.supportedSchemes.contains(scheme)
+        {
+            return url
+        }
+
+        // Bare links such as "apple.com" — only if the whole value is the link.
+        guard
+            let detector = try? NSDataDetector(
+                types: NSTextCheckingResult.CheckingType.link.rawValue
+            ),
+            let match = detector.firstMatch(
+                in: value,
+                range: NSRange(value.startIndex..., in: value)
+            ),
+            match.range.length == (value as NSString).length,
+            let url = match.url,
+            let scheme = url.scheme?.lowercased(),
+            Self.supportedSchemes.contains(scheme)
+        else { return nil }
+
+        return url
+    }
+
+    @objc private func openTapped() {
+        guard let url = openableURL else { return }
+
+        UIApplication.shared.open(url) { [weak self] success in
+            guard !success else { return }
+            let alert = UIAlertController(
+                title: "Unable to Open",
+                message: "No app is available to open this QR code.",
+                preferredStyle: .alert
+            )
+            alert.addAction(.init(title: "OK", style: .default))
+            self?.present(alert, animated: true)
+        }
     }
 
     @objc private func cancelTapped() {

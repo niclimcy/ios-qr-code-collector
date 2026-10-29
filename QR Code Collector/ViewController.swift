@@ -216,7 +216,17 @@ extension ViewController: UICollectionViewDelegate {
         let form = QRCodeFormViewController(with: item)
         let nav = UINavigationController(rootViewController: form)
         if let sheet = nav.sheetPresentationController {
-            sheet.detents = [.medium()]
+            // Sizes the sheet to fit its content instead of a fixed half-height.
+            let width = view.bounds.width
+            let fitContent = UISheetPresentationController.Detent.custom {
+                [weak nav, weak form] context in
+                guard let nav, let form else { return nil }
+                let height =
+                    form.fittingHeight(forWidth: width)
+                    + nav.navigationBar.sizeThatFits(.zero).height
+                return min(height, context.maximumDetentValue)
+            }
+            sheet.detents = [fitContent, .large()]
             sheet.prefersGrabberVisible = true
         }
         present(nav, animated: true)
