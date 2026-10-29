@@ -8,6 +8,7 @@ class ViewController: UIViewController {
     private var dataSource:
         UICollectionViewDiffableDataSource<Section, QRCodeItem>!
     private var style: Style = .grid
+    private var qrCodeItems: [QRCodeItem] = []
 
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
@@ -168,7 +169,11 @@ class ViewController: UIViewController {
     }
 
     @objc private func scanTapped() {
-        // TODO: open scanner
+        let scannerVC = QRScannerViewController()
+        scannerVC.delegate = self
+        if let navigationController = self.navigationController {
+            navigationController.pushViewController(scannerVC, animated: true)
+        }
     }
 
     @objc private func layoutChanged() {
@@ -193,7 +198,8 @@ class ViewController: UIViewController {
             QRCodeItem(value: "mailto:hello@example.com", scannedAt: Date()),
             QRCodeItem(value: "tel:+1234567890", scannedAt: Date()),
         ]
-        applySnapshot(items: items, animatingDifferences: false)
+        qrCodeItems += items
+        applySnapshot(items: qrCodeItems, animatingDifferences: false)
     }
 }
 
@@ -214,6 +220,14 @@ extension ViewController: UICollectionViewDelegate {
             sheet.prefersGrabberVisible = true
         }
         present(nav, animated: true)
+    }
+}
+
+// MARK: - QRScannerViewControllerDelegate
+extension ViewController: QRScannerViewControllerDelegate {
+    func didScanQRCode(_ value: String) {
+        qrCodeItems.append(QRCodeItem(value: value, scannedAt: Date.now))
+        applySnapshot(items: qrCodeItems, animatingDifferences: true)
     }
 }
 

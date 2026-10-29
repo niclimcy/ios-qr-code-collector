@@ -129,9 +129,27 @@ class QRScannerViewController: UIViewController {
         }
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        qrScannerView.stopRunning()
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // Stop the camera as the pop transition *starts*, not after it ends.
+        // Otherwise the live preview, full-screen blur and per-frame image
+        // processing keep running while UIKit animates the transition, and the
+        // session is still shutting down when QRScannerView's deinit tears it
+        // down synchronously on the main thread.
+        guard let coordinator = transitionCoordinator,
+            coordinator.isInteractive
+        else {
+            // Back button tap or programmatic pop after a successful scan.
+            qrScannerView.stopRunning()
+            return
+        }
+
+        // Interactive back-swipe: wait until the user lifts their finger, and
+        // only stop if the pop is actually going to complete.
+        coordinator.notifyWhenInteractionChanges { [weak self] context in
+            guard !context.isCancelled else { return }
+            self?.qrScannerView.stopRunning()
+        }
     }
 
     // MARK: - Actions
@@ -156,6 +174,11 @@ extension QRScannerViewController: QRScannerViewDelegate {
     func qrScannerView(_ qrScannerView: QRScannerView, didSuccess code: String)
     {
         delegate?.didScanQRCode(code)
+        if let navigationController,
+            navigationController.viewControllers.first != self
+        {
+            navigationController.popViewController(animated: true)
+        }
     }
 
     func qrScannerView(
