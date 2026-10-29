@@ -1,0 +1,19 @@
+"QR Code Collector/ViewController.swift"
+  s_9463bde4b84d95::t_d999d26dda4ee0 92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5270dc7d644adea6e89bae7d649794d144aff166",
+  "prompts": {},
+  "sessions": {
+    "s_9463bde4b84d95": {
+      "agent_id": {
+        "tool": "cline",
+        "id": "conv_1793248877278_mi1reou",
+        "model": "unknown"
+      },
+      "human_author": "Nicholas Lim <nic.lim@foodpanda.com>"
+    }
+  }
+}
