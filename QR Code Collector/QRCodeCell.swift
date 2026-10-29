@@ -44,8 +44,14 @@ class QRCodeCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFit
         imageView.setContentHuggingPriority(.required, for: .horizontal)
         imageView.setContentHuggingPriority(.required, for: .vertical)
-        imageView.setContentCompressionResistancePriority(.required, for: .horizontal)
-        imageView.setContentCompressionResistancePriority(.required, for: .vertical)
+        imageView.setContentCompressionResistancePriority(
+            .required,
+            for: .horizontal
+        )
+        imageView.setContentCompressionResistancePriority(
+            .required,
+            for: .vertical
+        )
         return imageView
     }()
 

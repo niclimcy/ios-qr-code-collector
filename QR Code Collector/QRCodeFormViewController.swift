@@ -83,7 +83,7 @@ class QRCodeFormViewController: UIViewController {
         stackView.addArrangedSubview(valueLabel)
         stackView.addArrangedSubview(scanLabel)
         stackView.addArrangedSubview(scannedAtLabel)
-        
+
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .cancel,
             target: self,
@@ -121,7 +121,7 @@ class QRCodeFormViewController: UIViewController {
 
         return UIImage(cgImage: cgImage)
     }
-    
+
     @objc private func cancelTapped() {
         self.dismiss(animated: true, completion: nil)
     }

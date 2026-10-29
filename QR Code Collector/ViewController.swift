@@ -4,11 +4,11 @@ class ViewController: UIViewController {
     nonisolated enum Section: Hashable {
         case main
     }
-    
+
     private var dataSource:
         UICollectionViewDiffableDataSource<Section, QRCodeItem>!
     private var style: Style = .grid
-    
+
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
             frame: .zero,
@@ -33,7 +33,7 @@ class ViewController: UIViewController {
         control.translatesAutoresizingMaskIntoConstraints = false
         return control
     }()
-    
+
     private func makeGridLayout() -> UICollectionViewLayout {
         let item = NSCollectionLayoutItem(
             layoutSize: .init(
@@ -50,11 +50,16 @@ class ViewController: UIViewController {
             count: 2
         )
         group.interItemSpacing = .fixed(12)
-        
+
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 12
-        section.contentInsets = .init(top: 12, leading: 16, bottom: 12, trailing: 16)
-        
+        section.contentInsets = .init(
+            top: 12,
+            leading: 16,
+            bottom: 12,
+            trailing: 16
+        )
+
         return UICollectionViewCompositionalLayout(section: section)
     }
     private func makeListLayout() -> UICollectionViewLayout {
@@ -71,11 +76,16 @@ class ViewController: UIViewController {
             ),
             subitems: [item]
         )
-        
+
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 12
-        section.contentInsets = .init(top: 12, leading: 16, bottom: 12, trailing: 16)
-        
+        section.contentInsets = .init(
+            top: 12,
+            leading: 16,
+            bottom: 12,
+            trailing: 16
+        )
+
         return UICollectionViewCompositionalLayout(section: section)
     }
 
@@ -86,7 +96,7 @@ class ViewController: UIViewController {
         configureDataSource()
         loadSampleData()
     }
-    
+
     private func setupUI() {
         view.backgroundColor = .systemBackground
         view.addSubview(collectionView)
@@ -105,7 +115,7 @@ class ViewController: UIViewController {
         )
         view.addSubview(segmentedControl)
     }
-    
+
     private func setupLayout() {
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(
@@ -132,7 +142,7 @@ class ViewController: UIViewController {
             ),
         ])
     }
-    
+
     private func configureDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, QRCodeItem>(
             collectionView: collectionView
@@ -156,11 +166,11 @@ class ViewController: UIViewController {
         snapshot.appendItems(items)
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
     }
-    
+
     @objc private func scanTapped() {
         // TODO: open scanner
     }
-    
+
     @objc private func layoutChanged() {
         style = segmentedControl.selectedSegmentIndex == 0 ? .grid : .list
         let layout = style == .grid ? makeGridLayout() : makeListLayout()
@@ -176,7 +186,10 @@ class ViewController: UIViewController {
     private func loadSampleData() {
         let items = [
             QRCodeItem(value: "https://www.apple.com", scannedAt: Date()),
-            QRCodeItem(value: "WIFI:T:WPA;S:MyNetwork;P:password123;;", scannedAt: Date()),
+            QRCodeItem(
+                value: "WIFI:T:WPA;S:MyNetwork;P:password123;;",
+                scannedAt: Date()
+            ),
             QRCodeItem(value: "mailto:hello@example.com", scannedAt: Date()),
             QRCodeItem(value: "tel:+1234567890", scannedAt: Date()),
         ]
@@ -184,14 +197,16 @@ class ViewController: UIViewController {
     }
 }
 
-
+// MARK: - UICollectionViewDelegate
 extension ViewController: UICollectionViewDelegate {
     func collectionView(
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        guard let item = dataSource.itemIdentifier(for: indexPath) else { return }
+        guard let item = dataSource.itemIdentifier(for: indexPath) else {
+            return
+        }
         let form = QRCodeFormViewController(with: item)
         let nav = UINavigationController(rootViewController: form)
         if let sheet = nav.sheetPresentationController {
@@ -203,5 +218,5 @@ extension ViewController: UICollectionViewDelegate {
 }
 
 #Preview {
-    ViewController()
+    UINavigationController(rootViewController: ViewController())
 }
