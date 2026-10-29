@@ -8,16 +8,10 @@ class ViewController: UIViewController {
     private var dataSource:
     UICollectionViewDiffableDataSource<Section, QRCodeItem>!
     
-    private let collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 100, height: 100)
-        layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 10
-        layout.scrollDirection = .vertical
-        
+    private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
             frame: .zero,
-            collectionViewLayout: layout
+            collectionViewLayout: makeGridLayout()
         )
         // Required for programmatic Auto Layout
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -35,6 +29,29 @@ class ViewController: UIViewController {
         return control
     }()
     
+    private func makeGridLayout() -> UICollectionViewLayout {
+        let item = NSCollectionLayoutItem(
+            layoutSize: .init(
+                widthDimension: .fractionalWidth(0.5),
+                heightDimension: .fractionalHeight(1)
+            )
+        )
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .estimated(140)
+            ),
+            repeatingSubitem: item,
+            count: 2
+        )
+        group.interItemSpacing = .fixed(12)
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 12
+        section.contentInsets = .init(top: 12, leading: 16, bottom: 12, trailing: 16)
+        
+        return UICollectionViewCompositionalLayout(section: section)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -112,14 +129,14 @@ class ViewController: UIViewController {
     }
     
     private func loadSampleData() {
-    let items = [
-        QRCodeItem(value: "https://www.apple.com", scannedAt: Date()),
-        QRCodeItem(value: "WIFI:T:WPA;S:MyNetwork;P:password123;;", scannedAt: Date()),
-        QRCodeItem(value: "mailto:hello@example.com", scannedAt: Date()),
-        QRCodeItem(value: "tel:+1234567890", scannedAt: Date()),
-    ]
-    applySnapshot(items: items, animatingDifferences: false)
-}
+        let items = [
+            QRCodeItem(value: "https://www.apple.com", scannedAt: Date()),
+            QRCodeItem(value: "WIFI:T:WPA;S:MyNetwork;P:password123;;", scannedAt: Date()),
+            QRCodeItem(value: "mailto:hello@example.com", scannedAt: Date()),
+            QRCodeItem(value: "tel:+1234567890", scannedAt: Date()),
+        ]
+        applySnapshot(items: items, animatingDifferences: false)
+    }
 }
 
 #Preview {
