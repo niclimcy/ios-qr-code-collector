@@ -1,0 +1,40 @@
+"QR Code Collector/Info.plist"
+  s_b678e78c022a86::t_895bec1a872d3d 5-6
+"QR Code Collector/QRScannerViewController.swift"
+  s_b678e78c022a86::t_38dfdf60e01c44 13-17
+  s_b678e78c022a86::t_7166d644a9fcf8 51,54-67
+  s_b678e78c022a86::t_41f6a6f1f60d20 132
+  s_b678e78c022a86::t_c02ea52f9a053b 22-47,52,68-87,103-104,110,112,120,123-124,129,134,144,149,156
+  s_b678e78c022a86::t_380976c873e718 10-12
+  s_b678e78c022a86::t_d68e695f629cdf 18-21
+  s_b678e78c022a86::t_ab1f5a1ae8bd87 48-50
+  s_b678e78c022a86::t_98adaa490061b9 53
+  s_b678e78c022a86::t_906bcdb411a944 88-90,100-102
+  s_b678e78c022a86::t_d969131c795db3 105-109
+  s_b678e78c022a86::t_62c252635641b4 111
+  s_b678e78c022a86::t_e74c0280a35b22 113-115,117-119
+  s_b678e78c022a86::t_b662e3800e5481 121-122
+  s_b678e78c022a86::t_541c131164860c 125-128
+  s_b678e78c022a86::t_83310f4abd5180 130-131
+  s_b678e78c022a86::t_f9221add8db09f 133
+  s_b678e78c022a86::t_0b78445d1ac23b 135-137,141-143
+  s_b678e78c022a86::t_af7807a1a21c32 145-148
+  s_b678e78c022a86::t_e38abf94c75883 150-155
+  s_b678e78c022a86::t_2e7daeb40e05b3 157-159
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7d94beb5bc807ba36faf6c97dac0f28330814f28",
+  "prompts": {},
+  "sessions": {
+    "s_b678e78c022a86": {
+      "agent_id": {
+        "tool": "cline",
+        "id": "conv_1793244307789_66u2sug",
+        "model": "unknown"
+      },
+      "human_author": "Nicholas Lim <nic.lim@foodpanda.com>"
+    }
+  }
+}
