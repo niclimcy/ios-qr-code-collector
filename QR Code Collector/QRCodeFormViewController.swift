@@ -28,6 +28,13 @@ class QRCodeFormViewController: UIViewController {
 
         return imageView
     }()
+    let valueLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .body)
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        return label
+    }()
 
     let scanLabel: UILabel = {
         let label = UILabel()
@@ -56,7 +63,7 @@ class QRCodeFormViewController: UIViewController {
     init(with qrCodeItem: QRCodeItem) {
         self.qrCodeItem = qrCodeItem
         super.init(nibName: nil, bundle: nil)
-
+        self.valueLabel.text = qrCodeItem.value
         self.scannedAtLabel.text =
             "Scanned \(qrCodeItem.scannedAt.formatted())"
         self.qrImageView.image = self.makeQRCode(from: qrCodeItem.value)
@@ -73,6 +80,7 @@ class QRCodeFormViewController: UIViewController {
         title = "Scan Again"
         view.addSubview(stackView)
         stackView.addArrangedSubview(qrImageView)
+        stackView.addArrangedSubview(valueLabel)
         stackView.addArrangedSubview(scanLabel)
         stackView.addArrangedSubview(scannedAtLabel)
     }
@@ -88,6 +96,7 @@ class QRCodeFormViewController: UIViewController {
                 constant: -24
             ),
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            qrImageView.heightAnchor.constraint(equalToConstant: 200),
         ])
     }
 

@@ -23,6 +23,7 @@ class ViewController: UIViewController {
                 forCellWithReuseIdentifier: cellType.reuseIdentifier
             )
         }
+        collectionView.delegate = self
         return collectionView
     }()
 
@@ -180,6 +181,24 @@ class ViewController: UIViewController {
             QRCodeItem(value: "tel:+1234567890", scannedAt: Date()),
         ]
         applySnapshot(items: items, animatingDifferences: false)
+    }
+}
+
+
+extension ViewController: UICollectionViewDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        guard let item = dataSource.itemIdentifier(for: indexPath) else { return }
+        let form = QRCodeFormViewController(with: item)
+        let nav = UINavigationController(rootViewController: form)
+        if let sheet = nav.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = true
+        }
+        present(nav, animated: true)
     }
 }
 
