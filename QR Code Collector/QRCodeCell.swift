@@ -121,18 +121,16 @@ class QRCodeCell: UICollectionViewCell {
 }
 
 #Preview {
-    let viewController = ViewController()
+    let viewController = ViewController(
+        store: QRCodeStore(
+            fileURL: URL.temporaryDirectory.appending(
+                path: "preview-qrcodes.json"
+            )
+        )
+    )
     viewController.loadViewIfNeeded()
     viewController.applySnapshot(
-        items: [
-            QRCodeItem(value: "https://www.apple.com", scannedAt: Date.now),
-            QRCodeItem(
-                value: "WIFI:T:WPA;S:MyNetwork;P:password123;;",
-                scannedAt: Date.now
-            ),
-            QRCodeItem(value: "mailto:hello@example.com", scannedAt: Date.now),
-            QRCodeItem(value: "tel:+1234567890", scannedAt: Date.now),
-        ],
+        items: QRCodeItem.examples,
         animatingDifferences: false
     )
     return viewController
