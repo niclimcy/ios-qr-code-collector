@@ -1,0 +1,20 @@
+"QR Code Collector/QRCodeCell.swift"
+  h_36695e5767c2ad 47-54
+"QR Code Collector/QRCodeFormViewController.swift"
+  h_36695e5767c2ad 86,124
+"QR Code Collector/SceneDelegate.swift"
+  h_36695e5767c2ad 11,13-18,24-26,29,36,41,46,51,58
+"QR Code Collector/ViewController.swift"
+  h_36695e5767c2ad 7,11,36,53,56-62,79,82-88,99,118,145,169,173,189-192,200,207-209,221
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7de329b21098a8f3f8fee5e913e50ee6e17565bf",
+  "prompts": {},
+  "humans": {
+    "h_36695e5767c2ad": {
+      "author": "Nicholas Lim <nic.lim@foodpanda.com>"
+    }
+  }
+}
