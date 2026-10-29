@@ -1,0 +1,21 @@
+"QR Code Collector/QRCodeFormViewController.swift"
+  s_f857225b9a3346::t_a929ed9e20793f 58
+  s_f857225b9a3346::t_277ba8b6cdbc1d 55-57
+  s_f857225b9a3346::t_656dd798d9ade3 59-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e9d1cb39ae9c5bcef70a07a13db0ee43133c44bd",
+  "prompts": {},
+  "sessions": {
+    "s_f857225b9a3346": {
+      "agent_id": {
+        "tool": "cline",
+        "id": "conv_1793242040043_qfzlddr",
+        "model": "unknown"
+      },
+      "human_author": "Nicholas Lim <nic.lim@foodpanda.com>"
+    }
+  }
+}
