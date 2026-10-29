@@ -22,6 +22,7 @@ class ViewController: UIViewController {
         )
         return collectionView
     }()
+
     private let segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["Grid", "List"])
         control.selectedSegmentIndex = 0
@@ -52,6 +53,28 @@ class ViewController: UIViewController {
         
         return UICollectionViewCompositionalLayout(section: section)
     }
+    private func makeListLayout() -> UICollectionViewLayout {
+        let item = NSCollectionLayoutItem(
+            layoutSize: .init(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .fractionalHeight(1)
+            )
+        )
+        let group = NSCollectionLayoutGroup.vertical(
+            layoutSize: .init(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .estimated(80)
+            ),
+            subitems: [item]
+        )
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 12
+        section.contentInsets = .init(top: 12, leading: 16, bottom: 12, trailing: 16)
+        
+        return UICollectionViewCompositionalLayout(section: section)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -70,6 +93,11 @@ class ViewController: UIViewController {
             style: .plain,
             target: self,
             action: #selector(scanTapped)
+        )
+        segmentedControl.addTarget(
+            self,
+            action: #selector(layoutChanged),
+            for: .valueChanged
         )
         view.addSubview(segmentedControl)
     }
@@ -128,6 +156,13 @@ class ViewController: UIViewController {
         // TODO: open scanner
     }
     
+    @objc private func layoutChanged() {
+        let layout = segmentedControl.selectedSegmentIndex == 0
+            ? makeGridLayout()
+            : makeListLayout()
+        collectionView.setCollectionViewLayout(layout, animated: true)
+    }
+
     private func loadSampleData() {
         let items = [
             QRCodeItem(value: "https://www.apple.com", scannedAt: Date()),
