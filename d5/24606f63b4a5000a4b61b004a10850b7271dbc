@@ -1,0 +1,29 @@
+"QR Code Collector/QRScannerViewController.swift"
+  s_301bdacff465bc::t_ae0de067a010bb 132-138,146,152
+  s_3784a6eaa8c51d::t_6b769e2505dac5 177-181
+  s_301bdacff465bc::t_6f0807b51ec7d0 139-145,147-151
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d524606f63b4a5000a4b61b004a10850b7271dbc",
+  "prompts": {},
+  "sessions": {
+    "s_301bdacff465bc": {
+      "agent_id": {
+        "tool": "cline",
+        "id": "conv_1793255505262_bn03ozf",
+        "model": "unknown"
+      },
+      "human_author": "Nicholas Lim <nic.lim@foodpanda.com>"
+    },
+    "s_3784a6eaa8c51d": {
+      "agent_id": {
+        "tool": "cline",
+        "id": "conv_1793255350608_dj2dom9",
+        "model": "unknown"
+      },
+      "human_author": "Nicholas Lim <nic.lim@foodpanda.com>"
+    }
+  }
+}
