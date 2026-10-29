@@ -114,19 +114,50 @@ class QRCodeFormViewController: UIViewController {
         )
     }
 
+    /// Padding between the stack view and the edges of the safe area.
+    private let contentPadding: CGFloat = 24
+
     private func setupLayout() {
+        // The QR image is up to 200pt tall, but is the first thing to shrink
+        // (before any text) if the sheet is ever short on space.
+        qrImageView.setContentCompressionResistancePriority(
+            .defaultLow,
+            for: .vertical
+        )
+
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: 24
+                constant: contentPadding
             ),
             stackView.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -24
+                constant: -contentPadding
             ),
-            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            qrImageView.heightAnchor.constraint(equalToConstant: 200),
+            stackView.topAnchor.constraint(
+                greaterThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: contentPadding
+            ),
+            stackView.bottomAnchor.constraint(
+                lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -contentPadding
+            ),
+            stackView.centerYAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.centerYAnchor
+            ),
+            qrImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 200),
         ])
+    }
+
+    /// Height of the content below the navigation bar at the given width.
+    func fittingHeight(forWidth width: CGFloat) -> CGFloat {
+        loadViewIfNeeded()
+        let size = stackView.systemLayoutSizeFitting(
+            CGSize(width: width - contentPadding * 2, height: 0),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+        return ceil(size.height) + contentPadding * 2
     }
 
     private func makeQRCode(from string: String, scale: CGFloat = 10)
