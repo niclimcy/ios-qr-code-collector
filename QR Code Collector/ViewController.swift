@@ -8,6 +8,7 @@ class ViewController: UIViewController {
     private var dataSource:
         UICollectionViewDiffableDataSource<Section, QRCodeItem>!
     private var style: Style = .grid
+    private var items: [QRCodeItem] = []
 
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
@@ -168,7 +169,9 @@ class ViewController: UIViewController {
     }
 
     @objc private func scanTapped() {
-        // TODO: open scanner
+        let scanner = QRScannerViewController()
+        scanner.delegate = self
+        present(scanner, animated: true)
     }
 
     @objc private func layoutChanged() {
@@ -184,7 +187,7 @@ class ViewController: UIViewController {
     }
 
     private func loadSampleData() {
-        let items = [
+        items = [
             QRCodeItem(value: "https://www.apple.com", scannedAt: Date()),
             QRCodeItem(
                 value: "WIFI:T:WPA;S:MyNetwork;P:password123;;",
@@ -214,6 +217,18 @@ extension ViewController: UICollectionViewDelegate {
             sheet.prefersGrabberVisible = true
         }
         present(nav, animated: true)
+    }
+}
+
+// MARK: - QRScannerViewControllerDelegate
+extension ViewController: QRScannerViewControllerDelegate {
+    func didScanQRCode(_ value: String) {
+        // The scanner can report the same code repeatedly before it finishes dismissing
+        guard presentedViewController is QRScannerViewController else { return }
+
+        dismiss(animated: true)
+        items.insert(QRCodeItem(value: value, scannedAt: Date()), at: 0)
+        applySnapshot(items: items)
     }
 }
 
