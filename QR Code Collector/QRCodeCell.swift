@@ -7,8 +7,20 @@
 
 import UIKit
 
+enum Style {
+    case grid, list
+
+    var cellType: QRCodeCell.Type {
+        switch self {
+        case .grid: QRCodeGridCell.self
+        case .list: QRCodeListCell.self
+        }
+    }
+}
+
+/// Shared card styling, subviews and data binding. Subclasses only arrange the subviews.
 class QRCodeCell: UICollectionViewCell {
-    static let reuseIdentifier = "QRCodeCell"
+    class var reuseIdentifier: String { String(describing: self) }
 
     private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -17,7 +29,7 @@ class QRCodeCell: UICollectionViewCell {
         return formatter
     }()
 
-    private let iconView: UIImageView = {
+    let iconView: UIImageView = {
         let configuration = UIImage.SymbolConfiguration(
             pointSize: 28,
             weight: .regular
@@ -30,43 +42,35 @@ class QRCodeCell: UICollectionViewCell {
         )
         imageView.tintColor = .systemBlue
         imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.setContentHuggingPriority(.required, for: .horizontal)
+        imageView.setContentHuggingPriority(.required, for: .vertical)
+        imageView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        imageView.setContentCompressionResistancePriority(.required, for: .vertical)
         return imageView
     }()
 
-    private let titleLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .body)
         label.adjustsFontForContentSizeCategory = true
         label.textColor = .label
-        label.textAlignment = .center
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
         return label
     }()
 
-    private let dateLabel: UILabel = {
+    let dateLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .subheadline)
         label.adjustsFontForContentSizeCategory = true
         label.textColor = .secondaryLabel
-        label.textAlignment = .center
         label.numberOfLines = 1
         return label
     }()
 
-    private let stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.spacing = 4
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupUI()
+        setupCard()
         setupLayout()
 
         // CGColor doesn't adapt automatically, so refresh the border on appearance changes
@@ -80,53 +84,16 @@ class QRCodeCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupUI() {
+    /// Subclasses override this to add and constrain the shared subviews.
+    func setupLayout() {}
+
+    private func setupCard() {
         contentView.backgroundColor = .systemBackground
         contentView.layer.cornerRadius = 12
         contentView.layer.cornerCurve = .continuous
         contentView.layer.borderWidth = 1
         contentView.clipsToBounds = true
         updateBorderColor()
-
-        stackView.addArrangedSubview(iconView)
-        stackView.addArrangedSubview(titleLabel)
-        stackView.addArrangedSubview(dateLabel)
-        stackView.setCustomSpacing(8, after: iconView)
-
-        contentView.addSubview(stackView)
-    }
-
-    private func setupLayout() {
-        // Lower priority so a fixed item size doesn't cause conflicts,
-        // while still letting the cell self-size its height when supported.
-        let bottomConstraint = stackView.bottomAnchor.constraint(
-            equalTo: contentView.bottomAnchor,
-            constant: -16
-        )
-        bottomConstraint.priority = .defaultHigh
-
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(
-                equalTo: contentView.topAnchor,
-                constant: 24
-            ),
-            stackView.leadingAnchor.constraint(
-                equalTo: contentView.leadingAnchor,
-                constant: 12
-            ),
-            stackView.trailingAnchor.constraint(
-                equalTo: contentView.trailingAnchor,
-                constant: -12
-            ),
-            stackView.bottomAnchor.constraint(
-                lessThanOrEqualTo: contentView.bottomAnchor,
-                constant: -16
-            ),
-            bottomConstraint,
-
-            titleLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-            dateLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-        ])
     }
 
     private func updateBorderColor() {

@@ -6,7 +6,8 @@ class ViewController: UIViewController {
     }
     
     private var dataSource:
-    UICollectionViewDiffableDataSource<Section, QRCodeItem>!
+        UICollectionViewDiffableDataSource<Section, QRCodeItem>!
+    private var style: Style = .grid
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
@@ -16,12 +17,15 @@ class ViewController: UIViewController {
         // Required for programmatic Auto Layout
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         // Must register cell before dequeuing
-        collectionView.register(
-            QRCodeCell.self,
-            forCellWithReuseIdentifier: QRCodeCell.reuseIdentifier
-        )
+        for cellType in [QRCodeGridCell.self, QRCodeListCell.self] {
+            collectionView.register(
+                cellType,
+                forCellWithReuseIdentifier: cellType.reuseIdentifier
+            )
+        }
         return collectionView
     }()
+
     private let segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["Grid", "List"])
         control.selectedSegmentIndex = 0
@@ -39,7 +43,7 @@ class ViewController: UIViewController {
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: .init(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .estimated(140)
+                heightDimension: .absolute(180)
             ),
             repeatingSubitem: item,
             count: 2
@@ -52,6 +56,28 @@ class ViewController: UIViewController {
         
         return UICollectionViewCompositionalLayout(section: section)
     }
+    private func makeListLayout() -> UICollectionViewLayout {
+        let item = NSCollectionLayoutItem(
+            layoutSize: .init(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .estimated(80)
+            )
+        )
+        let group = NSCollectionLayoutGroup.vertical(
+            layoutSize: .init(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .estimated(80)
+            ),
+            subitems: [item]
+        )
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 12
+        section.contentInsets = .init(top: 12, leading: 16, bottom: 12, trailing: 16)
+        
+        return UICollectionViewCompositionalLayout(section: section)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -70,6 +96,11 @@ class ViewController: UIViewController {
             style: .plain,
             target: self,
             action: #selector(scanTapped)
+        )
+        segmentedControl.addTarget(
+            self,
+            action: #selector(layoutChanged),
+            for: .valueChanged
         )
         view.addSubview(segmentedControl)
     }
@@ -104,18 +135,19 @@ class ViewController: UIViewController {
     private func configureDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, QRCodeItem>(
             collectionView: collectionView
-        ) { collectionView, indexPath, item in
+        ) { [weak self] collectionView, indexPath, item in
+            let cellType = (self?.style ?? .grid).cellType
             let cell =
-            collectionView.dequeueReusableCell(
-                withReuseIdentifier: QRCodeCell.reuseIdentifier,
-                for: indexPath
-            ) as! QRCodeCell
-            
+                collectionView.dequeueReusableCell(
+                    withReuseIdentifier: cellType.reuseIdentifier,
+                    for: indexPath
+                ) as! QRCodeCell
+
             cell.configure(with: item)
             return cell
         }
     }
-    
+
     // Call this method whenever your items change
     func applySnapshot(items: [QRCodeItem], animatingDifferences: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, QRCodeItem>()
@@ -128,6 +160,18 @@ class ViewController: UIViewController {
         // TODO: open scanner
     }
     
+    @objc private func layoutChanged() {
+        style = segmentedControl.selectedSegmentIndex == 0 ? .grid : .list
+        let layout = style == .grid ? makeGridLayout() : makeListLayout()
+
+        var snapshot = dataSource.snapshot()
+        // Cell class differs per style, so items must be reloaded, not just reconfigured
+        snapshot.reloadItems(snapshot.itemIdentifiers)
+        dataSource.apply(snapshot, animatingDifferences: false)
+
+        collectionView.setCollectionViewLayout(layout, animated: true)
+    }
+
     private func loadSampleData() {
         let items = [
             QRCodeItem(value: "https://www.apple.com", scannedAt: Date()),
