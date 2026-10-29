@@ -1,0 +1,24 @@
+"QR Code Collector/QRCodeFormViewController.swift"
+  s_98a4387e4cc36b::t_6cbf56570d3f4d 117-119,121-127,131,135,137-145,161-162,199,216-225
+  s_98a4387e4cc36b::t_ae0787034c2c12 146,148-160,170-198,200-215
+  s_98a4387e4cc36b::t_94081e45ec0cf4 163-169
+"QR Code Collector/ViewController.swift"
+  s_98a4387e4cc36b::t_07dcd41618124c 219-221,229-232
+  s_98a4387e4cc36b::t_b2b2c3dd808036 222-228
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9b0ebb2e239383f785516c92ce8fc1a83ed530e7",
+  "prompts": {},
+  "sessions": {
+    "s_98a4387e4cc36b": {
+      "agent_id": {
+        "tool": "cline",
+        "id": "conv_1793258407962_yn2d5nn",
+        "model": "unknown"
+      },
+      "human_author": "Nicholas Lim <nic.lim@foodpanda.com>"
+    }
+  }
+}
